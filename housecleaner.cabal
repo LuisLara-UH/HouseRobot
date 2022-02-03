@@ -25,7 +25,15 @@ source-repository head
 
 library
   exposed-modules:
+      Corral
+      Dirt
+      Environment
+      Kid
       Lib
+      Obstacle
+      Robot
+      Types
+      Utils
   other-modules:
       Paths_housecleaner
   hs-source-dirs:
