@@ -1,5 +1,7 @@
 module Lib
-    ( start
+    ( 
+        start,
+        nextTurn
     ) where
 
 import Types
@@ -8,7 +10,7 @@ import Utils
 import EnvironmentCases
 
 start :: String -> IO ()
-start _ = let state = nextTurn 5 state1 
+start _ = let state = nextTurn 4 state1 
         in printState state
 
 nextTurn :: Int -> EnvironmentState -> EnvironmentState 

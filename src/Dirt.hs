@@ -4,6 +4,7 @@ module Dirt
 (
     findDirt,
     cleanDirt,
+    makeDirt,
     makeDirts,
     dirtBusyPos
 ) where
@@ -22,7 +23,7 @@ makeDirt :: Kid -> [Position] -> Dirt
 makeDirt (pos, _) busyPos =
     let freeSpaces = aroundFreeSpaces pos busyPos
         len = length freeSpaces
-        randomIndex = randomNum 0 len
+        randomIndex = randomNum 0 (len - 1)
     in freeSpaces !! randomIndex
 
 makeDirts :: Kids -> [Position] -> Dirts

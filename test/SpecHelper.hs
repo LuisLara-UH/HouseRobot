@@ -9,7 +9,8 @@ module SpecHelper
     module Types,
     module Dirt,
     module Utils,
-    module Lib
+    module Lib,
+    module EnvironmentCases
   )
 where
 
@@ -21,6 +22,7 @@ import Robot
 import Types
 import Utils
 import Environment
+import EnvironmentCases
 import System.Random
 import Test.Hspec
 import Lib

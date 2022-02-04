@@ -3,9 +3,8 @@
 module Robot
 (
     findRobot,
-    moveRobot,
-    movableRobot,
-    moveRobots
+    moveRobots,
+    followKid
 ) where
 
 import Types
@@ -13,24 +12,13 @@ import Utils
 import Obstacle
 import Dirt
 import Kid
+import Corral (findCorral)
 
 findRobot :: Position -> Robots -> Bool
 findRobot pos [] = False
 findRobot pos (head:tail) =
     let (actualPos, charged) = head
     in pos == actualPos || findRobot pos tail
-
-moveRobot :: Robot -> Robots -> Direction -> Robots
-moveRobot (pos, charging) robots dir =
-    let newPos = getCoords pos dir
-    in deleteObject (pos, charging) robots ++ [(newPos, charging)]
-
-movableRobot :: Robot -> Direction -> [Position] -> Obstacles  -> Bool
-movableRobot (pos, _) dir busyPos obstacles =
-    let newPos = getCoords pos dir
-    in if findObstacle newPos obstacles
-        then pusheableObstacle newPos obstacles dir busyPos
-        else not(findItem newPos busyPos)
 
 moveRobots :: Robots -> EnvironmentState -> EnvironmentState
 moveRobots [] state = state
@@ -79,7 +67,10 @@ followCorral robot state =
           | charged && length way > 1 = way !! 1
           | not (null way) = head way
           | otherwise = pos
-    in (corrals, dirts, kids, obstacles, deleteObject robot robots ++ [(newPos, charged)])
+        arrivedToCorral = findCorral newPos corrals
+        newKids = if charged then deleteObject (pos, True) kids ++ [(newPos, True)] else kids
+        newCharged = not arrivedToCorral && charged
+    in (corrals, dirts, newKids, obstacles, deleteObject robot robots ++ [(newPos, newCharged)])
 
 findPathToKid :: Robot -> EnvironmentState -> Bool
 findPathToKid robot state =
@@ -101,10 +92,11 @@ followKid robot state =
         (_, posFound, index) = bfs [(-1, pos)] 0 kidsPos busyPos
         way = buildWay posFound index
         newPos
-          | charged && length way > 1 = way !! 1
-          | not (null way) = head way
+          | charged && length way > 2 = way !! 2
+          | length way > 1 = way !! 1
           | otherwise = pos
-    in (corrals, dirts, kids, obstacles, deleteObject robot robots ++ [(newPos, charged)])
+        (newKids, newCharged) = checkFoundKid newPos kids
+    in (corrals, dirts, newKids, obstacles, deleteObject robot robots ++ [(newPos, newCharged)])
 
 findPathToDirt :: Robot -> EnvironmentState -> Bool
 findPathToDirt robot state =
@@ -125,4 +117,13 @@ followDirt robot state =
           | charged && length way > 1 = way !! 1
           | not (null way) = head way
           | otherwise = pos
-    in (corrals, dirts, kids, obstacles, deleteObject robot robots ++ [(newPos, charged)])
+        newKids = if charged then deleteObject (pos, True) kids ++ [(newPos, True)] else kids
+    in (corrals, dirts, newKids, obstacles, deleteObject robot robots ++ [(newPos, charged)])
+
+checkFoundKid :: Position -> Kids -> (Kids, Bool)
+checkFoundKid pos kids =
+    let newKid = (pos, True)
+        oldKid = (pos, False)
+    in if findKid pos kids
+        then (deleteObject oldKid kids ++ [newKid], True)
+        else (kids, False)

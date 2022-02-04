@@ -4,6 +4,7 @@ module Kid
     chargedKid,
     movableKid,
     kidBusyPos,
+    moveKid,
     moveKids,
     walkingKids,
     corralKids
@@ -36,7 +37,7 @@ corralKids (firstKid:otherKids) corrals =
 movableKid :: Kid -> Direction -> [Position] -> Obstacles  -> Bool
 movableKid (pos, charged) dir busyPos obstacles =
     let newPos = getCoords pos dir
-    in not charged && if findObstacle newPos obstacles
+    in validPos newPos && not charged && if findObstacle newPos obstacles
         then pusheableObstacle newPos obstacles dir busyPos
         else not(findItem newPos busyPos)
 
@@ -53,7 +54,7 @@ moveKids (firstKid:otherKids) state =
     let (posFirstKid, chargedFirstKid) = firstKid
         (corrals, dirts, kids, obstacles, robots) = state
         busyPos = kidBusyPos state
-        movingDirection = directions !! randomNum 0 4
+        movingDirection = directions !! randomNum 0 3
         (movedKid, movedObstacles) =
             (
                 if movableKid firstKid movingDirection busyPos obstacles
