@@ -9,11 +9,11 @@ import Environment
 import Utils
 import EnvironmentCases
 
-start :: EnvironmentState -> IO ()
-start = printState
+start :: (EnvironmentState, Activity) -> IO ()
+start state = printState (nextTurn 5 state)
 
-nextTurn :: Int -> EnvironmentState -> EnvironmentState
-nextTurn 0 state = state
-nextTurn turns state =
-    let newState = executeTurn state
-    in nextTurn (turns - 1) newState
+nextTurn :: Int -> (EnvironmentState, Activity) -> EnvironmentState
+nextTurn 0 (state, _) = state
+nextTurn turns (state, activity) =
+    let newState = executeTurn (state, activity)
+    in nextTurn (turns - 1) (newState, activity)

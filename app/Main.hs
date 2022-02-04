@@ -5,4 +5,4 @@ import Types
 import EnvironmentCases
 
 main :: IO ()
-main = start state1
+main = start state7

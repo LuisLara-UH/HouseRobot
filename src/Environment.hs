@@ -8,17 +8,17 @@ import Robot
 import Dirt
 import Kid
 
-executeTurn :: EnvironmentState -> EnvironmentState
-executeTurn state = 
-    let stateAfterRobotsActions = executeRobotsActions state
+executeTurn :: (EnvironmentState, Activity) -> EnvironmentState
+executeTurn (state, activity) = 
+    let stateAfterRobotsActions = executeRobotsActions (state, activity)
         stateAfterDirty = executeDirty stateAfterRobotsActions
         stateAfterMoveKids = executeMoveKids stateAfterDirty
     in stateAfterMoveKids
 
-executeRobotsActions :: EnvironmentState -> EnvironmentState 
-executeRobotsActions state = 
+executeRobotsActions :: (EnvironmentState, Activity) -> EnvironmentState 
+executeRobotsActions (state, activity) = 
     let (_, _, _, _, robots) = state
-    in moveRobots robots state
+    in moveRobots robots (state, activity)
 
 executeDirty :: EnvironmentState -> EnvironmentState 
 executeDirty state = 
