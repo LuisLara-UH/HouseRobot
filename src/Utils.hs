@@ -10,7 +10,9 @@ module Utils
     deleteObject,
     aroundFreeSpaces,
     randomNum,
-    getPositions
+    getPositions,
+    bfs,
+    buildWay
 ) where
 
 import Data.List
@@ -80,6 +82,47 @@ aroundFreeSpaces (row, column) busyPos =
 
 getPositions :: [(Position, Bool)] -> [Position]
 getPositions [] = []
-getPositions (head:tail) = 
+getPositions (head:tail) =
     let (pos, _) = head
     in getPositions tail ++ [pos]
+
+bfsGetPositionsFound :: [(Int, Position)] -> [Position]
+bfsGetPositionsFound [] = []
+bfsGetPositionsFound (head:tail) =
+    let (_, pos) = head
+    in pos : bfsGetPositionsFound tail
+
+bfsAddValidPositions :: [(Int, Position)] -> [Position] -> [Position] -> [(Int, Position)]
+bfsAddValidPositions [] _ _ = []
+bfsAddValidPositions (firstPos:otherPos) posFound busyPos =
+    let (index, pos) = firstPos
+        posToAdd = [firstPos | validPos pos && notElem pos posFound && notElem pos busyPos]
+    in posToAdd ++ bfsAddValidPositions otherPos newPosFound busyPos
+
+bfs :: [(Int, Position)] -> Int -> [Position] -> [Position] -> (Bool, [(Int, Position)], Int)
+bfs posFound index objectives busyPos =
+    if index == length posFound
+        then (False, posFound, index)
+        else
+            (
+                let (parent, pos) = posFound !! index
+                in if pos `elem` objectives
+                    then (True, posFound, index)
+                    else
+                        (
+                            let positionsFound = bfsGetPositionsFound posFound
+                                newPos = [(index, getCoords pos "north")
+                                        , (index, getCoords pos "east")
+                                        , (index, getCoords pos "south")
+                                        , (index, getCoords pos "west")]
+                                validPositions = bfsAddValidPositions newPos positionsFound busyPos
+                            in bfs (posFound ++ validPositions) (index + 1) objectives busyPos
+                        )
+            )
+
+buildWay :: [(Int, Position)] -> Int -> [Position]
+buildWay posFound index = 
+    let (nextIndex, pos) = posFound !! index 
+    in if index == 0
+        then [pos]
+        else buildWay posFound nextIndex ++ [pos]
