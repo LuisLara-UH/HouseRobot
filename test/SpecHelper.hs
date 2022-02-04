@@ -8,7 +8,8 @@ module SpecHelper
     module Robot,
     module Types,
     module Dirt,
-    module Utils
+    module Utils,
+    module Lib
   )
 where
 
@@ -22,3 +23,4 @@ import Utils
 import Environment
 import System.Random
 import Test.Hspec
+import Lib

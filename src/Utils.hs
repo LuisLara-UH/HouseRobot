@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Replace case with fromMaybe" #-}
 {-# OPTIONS_GHC -Wno-deferred-out-of-scope-variables #-}
+{-# LANGUAGE BlockArguments #-}
 module Utils
 (
     size,
@@ -12,7 +13,8 @@ module Utils
     randomNum,
     getPositions,
     bfs,
-    buildWay
+    buildWay,
+    printState
 ) where
 
 import Data.List
@@ -20,13 +22,14 @@ import Types
 
 import System.IO.Unsafe
 import System.Random
+import Text.Read (Lexeme(String))
 
 randomNum :: Int -> Int -> Int
 {-# NOINLINE randomNum #-}
 randomNum min max = unsafePerformIO (getStdRandom (randomR (min, max)))
 size = 10
 
-findDirection :: Direction  -> [(Direction , Position )] -> Position
+findDirection :: Direction  -> [(Direction , Position)] -> Position
 findDirection value dict =
     case lookup value dict of
         Just result -> result
@@ -54,11 +57,6 @@ deleteObject obj objs =
     if obj `elem` objs
         then delete obj objs
         else objs
-
-distance :: Position -> Position -> Int
-distance (x1, y1) (x2, y2) =
-    let distance = (x1 - x2)**2 + (y1 - y2)**2
-    in toInt distance
 
 checkValidFreeSpaces :: [Position] -> [Position] -> [Position]
 checkValidFreeSpaces [] _ = []
@@ -97,7 +95,7 @@ bfsAddValidPositions [] _ _ = []
 bfsAddValidPositions (firstPos:otherPos) posFound busyPos =
     let (index, pos) = firstPos
         posToAdd = [firstPos | validPos pos && notElem pos posFound && notElem pos busyPos]
-    in posToAdd ++ bfsAddValidPositions otherPos newPosFound busyPos
+    in posToAdd ++ bfsAddValidPositions otherPos posFound busyPos
 
 bfs :: [(Int, Position)] -> Int -> [Position] -> [Position] -> (Bool, [(Int, Position)], Int)
 bfs posFound index objectives busyPos =
@@ -126,3 +124,18 @@ buildWay posFound index =
     in if index == 0
         then [pos]
         else buildWay posFound nextIndex ++ [pos]
+
+
+printState :: EnvironmentState  -> IO ()
+printState (corrals, dirts, kids, obstacles, robots) = do
+  print "---------------------- House Cleaner ----------------------------"
+  print "Robots :"
+  print robots
+  print "Dirts: "
+  print dirts
+  print "Corrals:"
+  print corrals
+  print "Kids:"
+  print kids
+  print "Obstacles:"
+  print obstacles

@@ -28,6 +28,7 @@ library
       Corral
       Dirt
       Environment
+      EnvironmentCases
       Kid
       Lib
       Obstacle

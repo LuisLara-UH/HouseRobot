@@ -1,6 +1,6 @@
 module Environment
 (
-    
+    executeTurn
 ) where
     
 import Types
@@ -17,8 +17,8 @@ executeTurn state =
 
 executeRobotsActions :: EnvironmentState -> EnvironmentState 
 executeRobotsActions state = 
-    let (corrals, dirts, kids, obstacles, robots) = state
-    in state
+    let (_, _, _, _, robots) = state
+    in moveRobots robots state
 
 executeDirty :: EnvironmentState -> EnvironmentState 
 executeDirty state = 

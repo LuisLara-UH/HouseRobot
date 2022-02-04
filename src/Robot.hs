@@ -4,7 +4,8 @@ module Robot
 (
     findRobot,
     moveRobot,
-    movableRobot
+    movableRobot,
+    moveRobots
 ) where
 
 import Types

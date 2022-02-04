@@ -1,9 +1,14 @@
-module SpecEnv where
+module SpecEnv
+(
+  spec,
+  main
+) where
 
 import SpecHelper
 
 spec :: Spec
-spec = describe "meh" $ do
+spec =
+  describe "meh" $ do
     context "findCorral" $
       it "should be True" $
         findCorral (1, 8) [(0,0), (0, 5), (1, 8)]
