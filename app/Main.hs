@@ -2,6 +2,7 @@ module Main where
 
 import Lib
 import Types
+import EnvironmentCases
 
 main :: IO ()
-main = start ""
+main = start state1
