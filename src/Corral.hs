@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use foldr" #-}
 module Corral
 (
     findCorral
@@ -9,5 +7,4 @@ import Types
 import Utils
 
 findCorral :: Corral -> Corrals -> Bool
-findCorral pos [] = False
-findCorral pos (head:tail) = pos == head || findCorral pos tail
+findCorral pos = foldr (\ head -> (||) (pos == head)) False

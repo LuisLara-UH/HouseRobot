@@ -24,6 +24,8 @@ dependencies:
 
 library:
   source-dirs: src
+  dependencies:
+    - random
 
 executables:
   housecleaner-exe:
@@ -35,6 +37,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - housecleaner
+    - random
 
 tests:
   housecleaner-test:
@@ -46,3 +49,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - housecleaner
+    - hspec
+    - random
+    - array

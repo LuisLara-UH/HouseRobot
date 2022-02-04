@@ -2,7 +2,8 @@ module Types
 (
     Row, Column, Charge, Position, Direction,
     Corral, Dirt, Obstacle, Kid, Robot,
-    Corrals, Dirts, Kids, Obstacles, Robots
+    Corrals, Dirts, Kids, Obstacles, Robots,
+    EnvironmentState
 ) where
 
 type Row = Int 
@@ -22,3 +23,5 @@ type Dirts = [Position]
 type Kids = [Kid]
 type Obstacles = [Position]
 type Robots = [Robot]
+
+type EnvironmentState = (Corrals, Dirts, Kids, Obstacles, Robots)

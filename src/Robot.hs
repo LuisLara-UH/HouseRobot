@@ -3,7 +3,8 @@
 module Robot
 (
     findRobot,
-    moveRobot
+    moveRobot,
+    movableRobot
 ) where
 
 import Types
@@ -27,3 +28,4 @@ movableRobot (pos, _) dir busyPos obstacles =
     in if findObstacle newPos obstacles
         then pusheableObstacle newPos obstacles dir busyPos
         else not(findItem newPos busyPos)
+

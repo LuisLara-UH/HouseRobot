@@ -2,7 +2,9 @@ module Kid
 (
     findKid,
     chargedKid,
-    movableKid
+    movableKid,
+    kidBusyPos,
+    moveKids
 ) where
 
 import Types
@@ -33,5 +35,32 @@ moveKid (pos, charged) kids dir =
     let newPos = getCoords pos dir 
     in deleteObject (pos, charged) kids ++ [(newPos, charged)] 
 
+directions = ["north", "east", "west", "south"]
+
+moveKids :: Kids -> EnvironmentState -> EnvironmentState  
+moveKids [] state = state
+moveKids (firstKid:otherKids) state = 
+    let (posFirstKid, chargedFirstKid) = firstKid
+        (corrals, dirts, kids, obstacles, robots) = state 
+        busyPos = kidBusyPos state
+        movingDirection = directions !! randomNum 0 4
+        (movedKid, movedObstacles) = 
+            (
+                if movableKid firstKid movingDirection busyPos obstacles
+                    then (let newPos = getCoords posFirstKid movingDirection
+                            in if findObstacle newPos obstacles
+                                then ((newPos, False), pushObstacle newPos movingDirection obstacles)
+                                else ((newPos, False), obstacles))
+                    else (firstKid, obstacles)
+            )
+        movedKids = deleteObject firstKid kids ++ [movedKid]
+        movedState = (corrals, dirts, movedKids, movedObstacles, robots)
+    in  moveKids otherKids movedState
+
 chargeKid :: Kid -> Kids -> Kids 
 chargeKid (pos, charged) kids = deleteObject (pos, charged) kids ++ [(pos, True)] 
+
+kidBusyPos :: EnvironmentState -> [Position]
+kidBusyPos state = 
+    let (_, dirts, kids, obstacles, robots) = state
+    in dirts ++ getPositions kids ++ getPositions robots
